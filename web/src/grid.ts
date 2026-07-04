@@ -33,6 +33,7 @@ function bookCard(b: Book, onPick: (b: Book) => void): HTMLElement {
 export function renderGrid(books: Book[], onPick: (b: Book) => void): void {
   const grid = document.getElementById('grid')!;
   const count = document.getElementById('count')!;
-  count.textContent = `${books.length} book${books.length === 1 ? '' : 's'}`;
+  count.textContent = `${books.length.toLocaleString()} book${books.length === 1 ? '' : 's'}`;
+  document.getElementById('empty')!.hidden = books.length > 0;
   grid.replaceChildren(...books.map((b) => bookCard(b, onPick)));
 }

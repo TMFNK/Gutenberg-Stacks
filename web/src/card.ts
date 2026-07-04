@@ -21,7 +21,7 @@ export function showDetail(b: Book | null): void {
         </p>
         ${b.summary ? `<p class="summary">${esc(b.summary)}</p>` : ''}
         <p class="downloads">${b.downloads.toLocaleString()} downloads</p>
-        <a class="read" href="${esc(b.url)}" target="_blank" rel="noopener">Read free at Project Gutenberg &rarr;</a>
+        <p class="read-row"><a class="read" href="${esc(b.url)}" target="_blank" rel="noopener">Read free at Project Gutenberg &rarr;</a></p>
       </div>
     </div>`;
   panel.querySelector('.close')!.addEventListener('click', () => showDetail(null));

@@ -2,8 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#12100c" />
+    <meta name="color-scheme" content="dark" />
     <title>Gutenberg Book Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&display=swap" rel="stylesheet" />
   </head>
   <body>
     <header>
@@ -11,11 +16,16 @@
       <p class="tagline">Find your next free book among Project Gutenberg&rsquo;s 1,000 most loved.</p>
       <div class="controls">
         <input id="search" type="search" placeholder="Search title, author, subject&hellip;" />
-        <button id="surprise" type="button">Surprise me</button>
+        <button id="surprise" type="button" class="primary">Surprise me</button>
+        <button id="filters-toggle" type="button" aria-expanded="false" aria-controls="filters">
+          Filters<span id="filter-count" class="badge" hidden></span>
+        </button>
       </div>
+      <div id="mood-shelf" class="mood-shelf" role="group" aria-label="Filter by mood"></div>
     </header>
     <div class="layout">
       <aside id="filters">
+        <div class="sheet-handle" aria-hidden="true"></div>
         <label>Mood <select id="f-mood"></select></label>
         <label>Difficulty <select id="f-difficulty"></select></label>
         <label>Theme <select id="f-theme"></select></label>
@@ -28,15 +38,20 @@
             <option value="title">Title A&ndash;Z</option>
           </select>
         </label>
-        <button id="clear" type="button">Clear filters</button>
+        <div class="filter-actions">
+          <button id="clear" type="button">Clear all</button>
+          <button id="apply" type="button" class="primary">Show books</button>
+        </div>
       </aside>
       <main>
         <p id="count"></p>
         <div id="grid"></div>
+        <p id="empty" hidden>No books match. Try clearing a filter or two.</p>
         <p id="error" hidden>Could not load the book data. Please try again later.</p>
       </main>
     </div>
-    <div id="detail-backdrop" hidden><div id="detail"></div></div>
+    <div id="sheet-backdrop" hidden></div>
+    <div id="detail-backdrop" hidden><div id="detail" role="dialog" aria-modal="true"></div></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

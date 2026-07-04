@@ -44,7 +44,41 @@ async function init() {
       : sortBooks(books, sort);
     return applyFilters(base, filters);
   };
-  const update = () => renderGrid(visible(), showDetail);
+
+  const badge = document.getElementById('filter-count')!;
+  const apply = document.getElementById('apply')!;
+  const moodSelect = document.getElementById('f-mood') as HTMLSelectElement;
+  const moodShelf = document.getElementById('mood-shelf')!;
+
+  const syncMoodShelf = () => {
+    for (const chip of moodShelf.children)
+      chip.setAttribute('aria-pressed',
+        String(chip.textContent === filters.mood));
+  };
+  const update = () => {
+    const shown = visible();
+    renderGrid(shown, showDetail);
+    const active = Object.values(filters).filter(Boolean).length;
+    badge.hidden = active === 0;
+    badge.textContent = String(active);
+    apply.textContent = `Show ${shown.length.toLocaleString()} book${shown.length === 1 ? '' : 's'}`;
+    syncMoodShelf();
+  };
+
+  moodShelf.replaceChildren(
+    ...facetOptions(books, (b) => [b.mood], 8).map((m) => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'mood-chip';
+      chip.textContent = m;
+      chip.setAttribute('aria-pressed', 'false');
+      chip.addEventListener('click', () => {
+        filters.mood = filters.mood === m ? null : m;
+        moodSelect.value = filters.mood ?? '';
+        update();
+      });
+      return chip;
+    }));
 
   for (const f of FACETS) {
     const select = document.getElementById(f.id) as HTMLSelectElement;
@@ -73,6 +107,23 @@ async function init() {
   document.getElementById('surprise')!.addEventListener('click', () => {
     const b = pickRandom(applyFilters(books, filters));
     if (b) showDetail(b);
+  });
+
+  const toggle = document.getElementById('filters-toggle')!;
+  const sheetBackdrop = document.getElementById('sheet-backdrop')!;
+  const setFiltersOpen = (open: boolean) => {
+    document.body.classList.toggle('filters-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    sheetBackdrop.hidden = !open;
+  };
+  toggle.addEventListener('click',
+    () => setFiltersOpen(!document.body.classList.contains('filters-open')));
+  apply.addEventListener('click', () => setFiltersOpen(false));
+  sheetBackdrop.addEventListener('click', () => setFiltersOpen(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!document.getElementById('detail-backdrop')!.hidden) showDetail(null);
+    else setFiltersOpen(false);
   });
   update();
 }
