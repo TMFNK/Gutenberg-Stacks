@@ -152,10 +152,14 @@ main { flex: 1; min-width: 0; }
 }
 #detail-backdrop[hidden], #sheet-backdrop[hidden] { display: none; }
 #detail {
-  position: relative; max-width: 640px; max-height: 85vh; overflow-y: auto;
+  position: relative; display: flex; flex-direction: column;
+  max-width: 640px; max-height: 85vh; overflow: hidden;
   background: var(--panel); border: 1px solid var(--border);
   border-radius: 16px; padding: 24px 24px 0;
-  overscroll-behavior: contain;
+}
+.detail-scroll {
+  flex: 1; min-height: 0; overflow-y: auto;
+  overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
 }
 #detail .close {
   position: absolute; top: 12px; right: 12px;
@@ -168,8 +172,7 @@ main { flex: 1; min-width: 0; }
 .summary { font-size: 15px; line-height: 1.6; }
 .downloads { font-size: 12px; color: var(--muted); }
 .read-row {
-  position: sticky; bottom: 0;
-  margin: 16px -24px 0; padding: 12px 24px 24px;
+  flex-shrink: 0; margin: 0 -24px; padding: 12px 24px 24px;
   background: var(--panel); border-top: 1px solid var(--border);
 }
 a.read {
@@ -230,7 +233,7 @@ a.read:hover { background: var(--accent-soft); }
   .detail-grid { flex-direction: column; }
   .detail-cover { width: 130px; }
   .read-row {
-    margin: 16px -20px 0;
+    margin: 0 -20px;
     padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
   }
 }
