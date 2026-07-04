@@ -1,4 +1,6 @@
 import { createMap } from './map';
+import { showCard } from './card';
+import { wireSearch } from './search';
 import type { Book, Cluster } from './types';
 
 async function init() {
@@ -6,6 +8,7 @@ async function init() {
     fetch('/data/books.json').then((r) => r.json()),
     fetch('/data/clusters.json').then((r) => r.json()),
   ]);
-  createMap(books, clusters, (b) => console.log('picked', b?.title));
+  const deck = createMap(books, clusters, showCard);
+  wireSearch(books, deck, showCard);
 }
 init();
