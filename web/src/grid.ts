@@ -13,7 +13,7 @@ export function fmtDownloads(n: number): string {
   return n.toLocaleString();
 }
 
-function bookCard(b: Book, onPick: (b: Book) => void): HTMLElement {
+function bookCard(b: Book, onPick: (b: Book, el: HTMLElement) => void): HTMLElement {
   const card = document.createElement('article');
   card.className = 'book-card';
   card.tabIndex = 0;
