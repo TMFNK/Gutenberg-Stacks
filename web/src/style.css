@@ -124,6 +124,28 @@ button.primary:hover { background: var(--accent-soft); border-color: var(--accen
 .empty-state p { margin: 0 0 12px; font-style: normal; color: var(--text); }
 .empty-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .empty-actions button { font-style: normal; }
+.share-btn {
+  margin: 8px 0 0; padding: 8px 14px; font-size: 13px;
+  color: var(--muted); background: var(--bg-deep);
+  border: 1px solid var(--border); border-radius: 999px;
+}
+.share-btn:hover { color: var(--text); border-color: var(--accent); }
+.active-filters {
+  display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0;
+}
+.filter-chip {
+  min-height: 32px; padding: 4px 10px; font-size: 13px;
+  color: var(--accent-soft); background: var(--panel);
+}
+.filter-chip .remove { margin-left: 4px; opacity: 0.7; }
+.empty-hint { margin: 0 0 10px; font-size: 14px; color: var(--muted); font-style: normal; }
+.mini-grid {
+  display: grid; gap: 10px; margin-bottom: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+.mini-grid .mini-card .hook { display: none; }
+.mini-grid .mini-card .card-body { padding: 8px; }
+.mini-grid .mini-card h2 { font-size: 13px; }
 
 .layout { display: flex; gap: 24px; padding: 8px 24px 24px; align-items: flex-start; }
 #filters {

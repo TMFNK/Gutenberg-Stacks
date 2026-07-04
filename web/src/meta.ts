@@ -1,4 +1,5 @@
 import type { Book } from './types';
+import { currentUrl } from './url';
 
 const SITE = 'Gutenberg Book Finder';
 
@@ -21,6 +22,7 @@ export function setPageMeta(book: Book | null): void {
     setMeta('og:title', title);
     setMeta('og:description', book.hook ?? book.summary?.slice(0, 160) ?? '');
     if (book.cover) setMeta('og:image', book.cover);
+    setMeta('og:url', currentUrl());
     setMeta('twitter:card', 'summary_large_image');
   } else {
     document.title = SITE;
@@ -30,4 +32,5 @@ export function setPageMeta(book: Book | null): void {
     setMeta('og:image', '');
     setMeta('twitter:card', 'summary');
   }
+  setMeta('og:url', currentUrl());
 }

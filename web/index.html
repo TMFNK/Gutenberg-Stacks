@@ -8,6 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Gutenberg Book Finder" />
     <meta property="og:description" content="Search 1,000 free Project Gutenberg books by title, author, mood, and more." />
+    <meta property="og:url" content="" />
     <meta name="twitter:card" content="summary" />
     <title>Gutenberg Book Finder</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,8 +26,13 @@
           Filters<span id="filter-count" class="badge" hidden></span>
         </button>
       </div>
+      <div id="active-filters" class="active-filters" hidden></div>
+      <p id="popular-label" class="shelf-label" hidden>Popular picks</p>
+      <div id="popular-shelf" class="mood-shelf" hidden role="group" aria-label="Popular picks"></div>
       <p id="recent-label" class="shelf-label" hidden>Recently viewed</p>
       <div id="recent-shelf" class="mood-shelf" hidden role="group" aria-label="Recently viewed"></div>
+      <p class="shelf-label">Browse by category</p>
+      <div id="category-shelf" class="mood-shelf" role="group" aria-label="Browse by category"></div>
       <p class="shelf-label">Filter by mood</p>
       <div id="mood-shelf" class="mood-shelf" role="group" aria-label="Filter by mood"></div>
     </header>
@@ -58,6 +64,8 @@
         <div id="grid"></div>
         <div id="empty" class="empty-state" hidden>
           <p id="empty-msg">No books match.</p>
+          <p id="empty-hint" class="empty-hint" hidden>Try one of these popular books instead:</p>
+          <div id="empty-popular-grid" class="mini-grid" hidden></div>
           <div class="empty-actions">
             <button id="empty-reset" type="button">Clear search &amp; filters</button>
             <button id="empty-popular" type="button" class="primary">Browse popular picks</button>

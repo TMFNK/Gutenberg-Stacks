@@ -17,3 +17,10 @@ export function similarBooks(book: Book, all: Book[], n = 4): Book[] {
     .slice(0, n)
     .map((x) => x.b);
 }
+
+export function booksByAuthor(book: Book, all: Book[], n = 4): Book[] {
+  return all
+    .filter((b) => b.id !== book.id && b.author === book.author)
+    .sort((a, z) => z.downloads - a.downloads)
+    .slice(0, n);
+}

@@ -45,3 +45,14 @@ export function renderGrid(books: Book[],
   count.textContent = `${books.length.toLocaleString()} book${books.length === 1 ? '' : 's'}`;
   grid.replaceChildren(...books.map((b) => bookCard(b, onPick)));
 }
+
+/** Compact row of cards for empty-state suggestions. */
+export function renderMiniGrid(books: Book[],
+                              onPick: (b: Book, el: HTMLElement) => void): void {
+  const el = document.getElementById('empty-popular-grid')!;
+  el.replaceChildren(...books.map((b) => {
+    const card = bookCard(b, onPick);
+    card.classList.add('mini-card');
+    return card;
+  }));
+}

@@ -41,4 +41,16 @@ describe('url state', () => {
     writeState({ query: '', sort: 'downloads', filters: EMPTY_FILTERS, bookId: null });
     expect(search).toBe('');
   });
+
+  it('can push a history entry', () => {
+    const push = vi.fn();
+    vi.stubGlobal('history', {
+      replaceState: vi.fn(),
+      pushState: push,
+    });
+    writeState({
+      query: '', sort: 'downloads', filters: EMPTY_FILTERS, bookId: 42,
+    }, true);
+    expect(push).toHaveBeenCalled();
+  });
 });

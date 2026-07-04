@@ -35,7 +35,7 @@ export function readState(): Partial<AppState> {
   };
 }
 
-export function writeState(state: AppState): void {
+export function writeState(state: AppState, push = false): void {
   const p = new URLSearchParams();
   if (state.query.trim()) p.set('q', state.query.trim());
   if (state.sort !== 'downloads') p.set('sort', state.sort);
@@ -46,5 +46,10 @@ export function writeState(state: AppState): void {
   if (state.bookId != null) p.set('book', String(state.bookId));
   const qs = p.toString();
   const url = qs ? `?${qs}` : location.pathname;
-  history.replaceState(null, '', url);
+  if (push) history.pushState(null, '', url);
+  else history.replaceState(null, '', url);
+}
+
+export function currentUrl(): string {
+  return location.href;
 }

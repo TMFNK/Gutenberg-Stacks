@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { similarBooks } from './similar';
+import { similarBooks, booksByAuthor } from './similar';
 import type { Book } from './types';
 
 function mk(over: Partial<Book>): Book {
@@ -27,5 +27,17 @@ describe('similarBooks', () => {
 
   it('returns empty when nothing matches', () => {
     expect(similarBooks(all[2], [all[2]])).toEqual([]);
+  });
+});
+
+describe('booksByAuthor', () => {
+  const all = [
+    mk({ id: 1, author: 'Austen, Jane', downloads: 100 }),
+    mk({ id: 2, author: 'Austen, Jane', downloads: 200 }),
+    mk({ id: 3, author: 'Melville, Herman', downloads: 300 }),
+  ];
+
+  it('lists other books by the same author by downloads', () => {
+    expect(booksByAuthor(all[0], all).map((b) => b.id)).toEqual([2]);
   });
 });
