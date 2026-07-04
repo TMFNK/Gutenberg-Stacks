@@ -1,8 +1,8 @@
 # Gutenberg Book Finder
 
-A whichbook-inspired search & browse interface for free Project Gutenberg books. Search instantly across titles, authors, subjects, and summaries; filter by mood, theme, difficulty, subject, language, and era; or hit "Surprise me". Every book card shows its cover, an LLM-generated hook, and tags, with a detail view linking straight to the free book on gutenberg.org.
+A search & browse interface for free Project Gutenberg books. Search instantly across titles, authors, subjects, and summaries; filter by mood, theme, difficulty, subject, language, and era; or hit "Surprise me". Every book card shows its cover, an LLM-generated hook, and tags, with a detail view linking straight to the free book on gutenberg.org.
 
-**Live site:** https://tmfnk.github.io/Gutenberg-Book-Finder/
+**Live site:** <https://tmfnk.github.io/Gutenberg-Book-Finder/>
 
 Currently covering the 1,000 most-downloaded books on Project Gutenberg (M1). Scaling to the full catalog (~75,000 books) is planned.
 
@@ -23,7 +23,7 @@ The frontend is a static site: Vite + TypeScript, no framework. Search is client
 
 ## Project layout
 
-```
+```text
 pipeline/   Python data pipeline (uv-managed)
   src/gutenberg_galaxy/
     catalog.py    Gutendex catalog fetch + cache
