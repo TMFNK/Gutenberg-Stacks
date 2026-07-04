@@ -21,6 +21,7 @@
           Filters<span id="filter-count" class="badge" hidden></span>
         </button>
       </div>
+      <div id="recent-shelf" class="mood-shelf" hidden role="group" aria-label="Recently viewed"></div>
       <div id="mood-shelf" class="mood-shelf" role="group" aria-label="Filter by mood"></div>
     </header>
     <div class="layout">
@@ -34,6 +35,7 @@
         <label>Era <select id="f-era"></select></label>
         <label>Sort by
           <select id="f-sort">
+            <option value="relevance">Best match</option>
             <option value="downloads">Most downloaded</option>
             <option value="title">Title A&ndash;Z</option>
           </select>

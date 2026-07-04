@@ -85,6 +85,7 @@ button.primary:hover { background: var(--accent-soft); border-color: var(--accen
   background: var(--accent); color: var(--accent-ink);
   border-color: var(--accent); font-weight: 600;
 }
+.recent-chip { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .layout { display: flex; gap: 24px; padding: 8px 24px 24px; align-items: flex-start; }
 #filters {

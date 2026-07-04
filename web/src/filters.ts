@@ -44,7 +44,8 @@ export function applyFilters(books: Book[], f: Filters): Book[] {
     (!f.era || era(b.year) === f.era));
 }
 
-export function sortBooks(books: Book[], sort: 'downloads' | 'title'): Book[] {
+export function sortBooks(books: Book[],
+                          sort: 'downloads' | 'title'): Book[] {
   const copy = [...books];
   if (sort === 'title') copy.sort((a, z) => a.title.localeCompare(z.title));
   else copy.sort((a, z) => z.downloads - a.downloads);

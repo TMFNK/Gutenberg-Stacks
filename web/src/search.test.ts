@@ -33,4 +33,12 @@ describe('searchBooks', () => {
   it('returns empty for no match', () => {
     expect(searchBooks(index, books, 'zzzzqqq')).toEqual([]);
   });
+  it('prefers higher downloads among similar matches', () => {
+    const popular = [
+      mk({ id: 1, title: 'Love Story', author: 'A', downloads: 50000 }),
+      mk({ id: 2, title: 'Love Letters', author: 'B', downloads: 1000 }),
+    ];
+    const idx = buildIndex(popular);
+    expect(searchBooks(idx, popular, 'love').map((b) => b.id)).toEqual([1, 2]);
+  });
 });

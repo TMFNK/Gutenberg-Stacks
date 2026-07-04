@@ -5,6 +5,7 @@ import { EMPTY_FILTERS, applyFilters, era, facetOptions, pickRandom,
          sortBooks, type Filters } from './filters';
 import { renderGrid } from './grid';
 import { showDetail } from './card';
+import { loadRecent, pushRecent } from './recent';
 
 interface Facet {
   id: string;
@@ -22,6 +23,8 @@ const FACETS: Facet[] = [
   { id: 'f-era', key: 'era', get: (b) => [era(b.year)] },
 ];
 
+type Sort = 'relevance' | 'downloads' | 'title';
+
 async function init() {
   let books: Book[];
   try {
@@ -33,16 +36,47 @@ async function init() {
     return;
   }
 
+  const byId = new Map(books.map((b) => [b.id, b]));
   const index = buildIndex(books);
   const filters: Filters = { ...EMPTY_FILTERS };
   let query = '';
-  let sort: 'downloads' | 'title' = 'downloads';
+  let sort: Sort = 'downloads';
+  const sortSelect = document.getElementById('f-sort') as HTMLSelectElement;
+  const recentShelf = document.getElementById('recent-shelf')!;
+
+  const openDetail = (b: Book) => {
+    pushRecent(b.id);
+    renderRecentShelf();
+    showDetail(b);
+  };
 
   const visible = (): Book[] => {
-    const base = query.trim()
-      ? searchBooks(index, books, query)
-      : sortBooks(books, sort);
+    let base: Book[];
+    if (query.trim()) {
+      base = searchBooks(index, books, query);
+      if (sort === 'downloads') base = sortBooks(base, 'downloads');
+      else if (sort === 'title') base = sortBooks(base, 'title');
+    } else {
+      base = sortBooks(books, sort === 'title' ? 'title' : 'downloads');
+    }
     return applyFilters(base, filters);
+  };
+
+  const renderRecentShelf = () => {
+    const recent = loadRecent()
+      .map((id) => byId.get(id))
+      .filter((b): b is Book => b !== undefined);
+    recentShelf.hidden = recent.length === 0;
+    recentShelf.replaceChildren(
+      ...recent.map((b) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'mood-chip recent-chip';
+        chip.textContent = b.title;
+        chip.title = b.title;
+        chip.addEventListener('click', () => openDetail(b));
+        return chip;
+      }));
   };
 
   const badge = document.getElementById('filter-count')!;
@@ -57,7 +91,7 @@ async function init() {
   };
   const update = () => {
     const shown = visible();
-    renderGrid(shown, showDetail);
+    renderGrid(shown, openDetail);
     const active = Object.values(filters).filter(Boolean).length;
     badge.hidden = active === 0;
     badge.textContent = String(active);
@@ -89,13 +123,22 @@ async function init() {
       update();
     });
   }
-  (document.getElementById('f-sort') as HTMLSelectElement)
-    .addEventListener('change', (e) => {
-      sort = (e.target as HTMLSelectElement).value as 'downloads' | 'title';
-      update();
-    });
+  sortSelect.addEventListener('change', (e) => {
+    sort = (e.target as HTMLSelectElement).value as Sort;
+    update();
+  });
   document.getElementById('search')!.addEventListener('input', (e) => {
-    query = (e.target as HTMLInputElement).value;
+    const v = (e.target as HTMLInputElement).value;
+    const hadQuery = !!query.trim();
+    query = v;
+    const hasQuery = !!query.trim();
+    if (hasQuery && !hadQuery && sort === 'downloads') {
+      sort = 'relevance';
+      sortSelect.value = sort;
+    } else if (!hasQuery && hadQuery && sort === 'relevance') {
+      sort = 'downloads';
+      sortSelect.value = sort;
+    }
     update();
   });
   document.getElementById('clear')!.addEventListener('click', () => {
@@ -106,7 +149,7 @@ async function init() {
   });
   document.getElementById('surprise')!.addEventListener('click', () => {
     const b = pickRandom(applyFilters(books, filters));
-    if (b) showDetail(b);
+    if (b) openDetail(b);
   });
 
   const toggle = document.getElementById('filters-toggle')!;
@@ -125,6 +168,7 @@ async function init() {
     if (!document.getElementById('detail-backdrop')!.hidden) showDetail(null);
     else setFiltersOpen(false);
   });
+  renderRecentShelf();
   update();
 }
 init();
