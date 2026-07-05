@@ -1,6 +1,6 @@
 # Gutenberg Stacks
 
-A card-and-stack browser for free Project Gutenberg books, modeled faithfully on [Winnie Lim's self-directed learning network prototype](https://winnielim.org/playlists/designing-a-self-directed-learning-network/). Instead of a search form, you wander: the home screen is a wall of black **stacks** (Project Gutenberg categories), each stack opens into **era** stacks, eras open into **subject** stacks, and subjects hold **book cards** — cover, author, an LLM-written hook, and a link straight to the free book on gutenberg.org. Every card shows which stacks it lives in ("stacks (N)"), so you can pivot sideways into a different rabbit hole at any point.
+A vibe-coded card-and-stack browser for free Project Gutenberg books, modeled faithfully on [Winnie Lim's self-directed learning network prototype](https://winnielim.org/playlists/designing-a-self-directed-learning-network/). Instead of a search form, you wander: the home screen is a wall of black **stacks** (Project Gutenberg categories), each stack opens into **era** stacks, eras open into **subject** stacks, and subjects hold **book cards**; each card has a cover, author, an LLM-written hook, and a link straight to the free book on gutenberg.org. Every card shows which stacks it lives in ("stacks (N)"), so you can pivot sideways into a different rabbit hole at any point.
 
 **Live site:** <https://tmfnk.github.io/Gutenberg-Stacks/>
 
@@ -10,25 +10,25 @@ Currently covering the 1,000 most-downloaded books on Project Gutenberg (M1). Sc
 
 ## The design
 
-The UI is a read-only port of the [learn prototype](https://learn-e4341.firebaseapp.com/) (Vue + Firebase, 2017) that Winnie Lim built across her design essays (v0.1–v0.3): the same card anatomy, the same nested-stack drill-down, the same "stacks (N)" pivot modal, the same plain black-and-white visual language — applied to the Gutenberg archive.
+The UI is a read-only port of the [learn prototype](https://learn-e4341.firebaseapp.com/) (Vue + Firebase, 2017) that Winnie Lim built across her design essays (v0.1–v0.3): the same card anatomy, the same nested-stack drill-down, the same "stacks (N)" pivot modal, the same plain black-and-white visual language, all applied to the Gutenberg archive.
 
-- **Home** — one stack per PG bookshelf, plus an "All books" stack with client-side full-text search
-- **Drill down** — Category → Era (Before 1800 / 19th / 20th century / Undated) → Subject → books; nested stacks render as cards, exactly like the prototype
-- **Pivot** — books belong to many stacks; the "stacks (N)" modal jumps between them
-- **Mobile** — full-height swipeable card carousel inside a stack (CSS scroll-snap), vertical list everywhere else
+- **Home**: one stack per PG bookshelf, plus an "All books" stack with client-side full-text search
+- **Drill down**: Category → Era (Before 1800 / 19th / 20th century / Undated) → Subject → books; nested stacks render as cards, exactly like the prototype
+- **Pivot**: books belong to many stacks; the "stacks (N)" modal jumps between them
+- **Mobile**: full-height swipeable card carousel inside a stack (CSS scroll-snap), vertical list everywhere else
 
-Stacks are derived in the browser at load time from `books.json` — the site stays fully static. The full research trail and decision log lives in the maintainer's vault (`Projects/Gutenberg-Book-Finder/Winnie-Lim-Stacks-Redesign.md`).
+Stacks are derived in the browser at load time from `books.json` so the site stays fully static. The full research trail and decision log lives in the maintainer's vault (`Projects/Gutenberg-Book-Finder/Winnie-Lim-Stacks-Redesign.md`).
 
 ## How it works
 
 A Python pipeline builds the book data once, offline:
 
-1. **Catalog** — fetch book metadata (title, author, subjects, download counts) from the [Gutendex](https://gutendex.com/) API.
-2. **Excerpts** — download each book's plain text, strip the Project Gutenberg boilerplate, keep the first ~2,000 words.
-3. **Embed** — embed title + subjects + excerpt locally with `sentence-transformers` (multilingual, runs on-device — no API cost).
-4. **Layout** — project embeddings to 2D with UMAP, group into clusters with HDBSCAN.
-5. **Enrich** — an LLM (via [OpenRouter](https://openrouter.ai/)) names each cluster and tags every book with a mood, themes, difficulty, and one-line hook.
-6. **Export** — write compact JSON consumed by the frontend.
+1. **Catalog**: fetch book metadata (title, author, subjects, download counts) from the [Gutendex](https://gutendex.com/) API.
+2. **Excerpts**: download each book's plain text, strip the Project Gutenberg boilerplate, keep the first ~2,000 words.
+3. **Embed**: embed title + subjects + excerpt locally with `sentence-transformers` (multilingual, runs on-device, no API cost).
+4. **Layout**: project embeddings to 2D with UMAP, group into clusters with HDBSCAN.
+5. **Enrich**: an LLM (via [OpenRouter](https://openrouter.ai/)) names each cluster and tags every book with a mood, themes, difficulty, and one-line hook.
+6. **Export**: write compact JSON consumed by the frontend.
 
 The scraped metadata (catalog, LLM tags, exported book data) is committed to this repo, so the frontend runs without re-running the pipeline.
 
@@ -81,5 +81,5 @@ Requires `web/public/data/books.json`, produced by the `export` pipeline stage (
 
 ## Design & planning docs
 
-- [docs/design.md](docs/design.md) — original M1 design spec (the pre-redesign "Gutenberg Galaxy" star-map concept; the pipeline sections still apply)
-- [docs/superpowers/plans/2026-07-04-m1-pipeline-and-map.md](docs/superpowers/plans/2026-07-04-m1-pipeline-and-map.md) — M1 implementation plan
+- [docs/design.md](docs/design.md): original M1 design spec (the pre-redesign "Gutenberg Galaxy" star-map concept; the pipeline sections still apply)
+- [docs/superpowers/plans/2026-07-04-m1-pipeline-and-map.md](docs/superpowers/plans/2026-07-04-m1-pipeline-and-map.md): M1 implementation plan

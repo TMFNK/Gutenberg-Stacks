@@ -165,9 +165,6 @@ function bookCard(b: Book, stacks: StackIndex, opts: BookCardOpts = {}):
   return li;
 }
 
-const matches = (q: string, ...fields: (string | null)[]) =>
-  !q || fields.some((f) => f?.toLowerCase().includes(q.toLowerCase()));
-
 /** Thin ink-line under the header that fills as the mobile carousel is
     swiped through — the visual twin of the "3 / 46 cards" counter. */
 function setCarouselProgress(list: HTMLElement | null) {
@@ -186,8 +183,7 @@ function setCarouselProgress(list: HTMLElement | null) {
 
 /** Home: the stack list, led by the "All books" card (the prototype's
     "My cards"). */
-export function renderHome(app: HTMLElement, stacks: StackIndex,
-                           query: string) {
+export function renderHome(app: HTMLElement, stacks: StackIndex) {
   const wrap = el('div', 'stacks');
   const list = el('ul', 'stack-list');
 
@@ -197,10 +193,9 @@ export function renderHome(app: HTMLElement, stacks: StackIndex,
   h2.append(link('#/cards', 'All books'));
   all.append(h2, el('p', 'stack-why',
     'every card in the archive, in one searchable stack'));
-  if (matches(query, 'All books')) list.append(all);
+  list.append(all);
 
-  for (const s of stacks.home)
-    if (matches(query, s.title, s.description)) list.append(homeStackCard(s));
+  for (const s of stacks.home) list.append(homeStackCard(s));
   wrap.append(list);
   app.replaceChildren(wrap);
   setCarouselProgress(null);
@@ -209,17 +204,41 @@ export function renderHome(app: HTMLElement, stacks: StackIndex,
 /** A stack: header card, nested stack cards, then book cards.
     On mobile the list becomes a swipeable carousel. */
 export function renderStack(app: HTMLElement, stack: Stack,
-                            stacks: StackIndex, query: string) {
+                            stacks: StackIndex) {
   const list = el('ul', 'card-list carousel');
   list.append(stackHeaderCard(stack));
-  const children = stack.children.filter((s) => matches(query, s.title));
-  const books = stack.books.filter((b) => matches(query, b.title, b.author));
-  const total = children.length + books.length;
-  for (const s of children) list.append(stackTypeCard(s));
-  books.forEach((b, i) => list.append(bookCard(b, stacks,
-    { index: children.length + i, total })));
+  const total = stack.children.length + stack.books.length;
+  for (const s of stack.children) list.append(stackTypeCard(s));
+  stack.books.forEach((b, i) => list.append(bookCard(b, stacks,
+    { index: stack.children.length + i, total })));
   app.replaceChildren(list);
   setCarouselProgress(list);
+}
+
+/** Global search results: matching stacks as stack cards, then matching
+    books — reachable from any screen via the header input. */
+export function renderSearch(app: HTMLElement, query: string,
+                             stackHits: Stack[], bookHits: Book[],
+                             stacks: StackIndex) {
+  const MAX_BOOKS = 60;
+  const list = el('ul', 'card-list');
+  const head = el('li', 'card');
+  const total = stackHits.length + bookHits.length;
+  head.append(el('h2', undefined,
+    `${total} card${total === 1 ? '' : 's'} match “${query}”`));
+  if (total === 0)
+    head.append(el('p', 'empty-note',
+      'no stacks or books match — try fewer letters'));
+  else if (bookHits.length > MAX_BOOKS)
+    head.append(el('p', 'empty-note',
+      `showing the first ${MAX_BOOKS} books`));
+  list.append(head);
+
+  for (const s of stackHits) list.append(stackTypeCard(s));
+  for (const b of bookHits.slice(0, MAX_BOOKS))
+    list.append(bookCard(b, stacks));
+  app.replaceChildren(list);
+  setCarouselProgress(null);
 }
 
 /** All cards, filterable — the prototype's "My cards" view.

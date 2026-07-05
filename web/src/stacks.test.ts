@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildStacks, cardCount, type Stack } from './stacks';
+import { buildStacks, cardCount, searchStacks, type Stack } from './stacks';
 import type { Book } from './types';
 
 function mk(over: Partial<Book>): Book {
@@ -96,5 +96,30 @@ describe('buildStacks', () => {
     expect(new Set(slugs).size).toBe(slugs.length);
     expect(slugs).toContain('fiction--19th-century--war');
     expect(slugs).toContain('fiction--20th-century--war');
+  });
+});
+
+describe('searchStacks', () => {
+  const books = [
+    ...[1, 2, 3, 4].map((id) => fiction(id, { year: 1850, subjects: ['Sea stories'] })),
+    ...[5, 6].map((id) => mk({ id, bookshelves: ['Category: Poetry'] })),
+  ];
+  const index = buildStacks(books);
+
+  it('matches stack titles case-insensitively', () => {
+    expect(searchStacks(index, 'sea sto').map((s) => s.title))
+      .toEqual(['Sea stories']);
+    expect(searchStacks(index, 'POETRY')[0].title).toBe('Poetry');
+  });
+
+  it('ranks title matches before description matches', () => {
+    const hits = searchStacks(index, 'fiction');
+    expect(hits[0].title).toBe('Fiction');
+    expect(hits.length).toBeGreaterThan(1);
+  });
+
+  it('returns nothing for unmatched queries and respects the limit', () => {
+    expect(searchStacks(index, 'dracula')).toEqual([]);
+    expect(searchStacks(index, 'e', 2)).toHaveLength(2);
   });
 });

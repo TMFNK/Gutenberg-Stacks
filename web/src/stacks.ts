@@ -70,6 +70,19 @@ function pickSubjects(books: Book[]): string[] {
     .map(([s]) => s);
 }
 
+/** Stacks whose title or description matches the query, title hits first. */
+export function searchStacks(index: StackIndex, query: string,
+                             limit = 12): Stack[] {
+  const q = query.toLowerCase();
+  const inTitle: Stack[] = [];
+  const inDescription: Stack[] = [];
+  for (const s of index.bySlug.values()) {
+    if (s.title.toLowerCase().includes(q)) inTitle.push(s);
+    else if (s.description.toLowerCase().includes(q)) inDescription.push(s);
+  }
+  return [...inTitle, ...inDescription].slice(0, limit);
+}
+
 export function buildStacks(books: Book[]): StackIndex {
   const bySlug = new Map<string, Stack>();
   const byBook = new Map<number, Stack[]>();

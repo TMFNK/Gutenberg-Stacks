@@ -1,9 +1,9 @@
 import './style.css';
 import type { Book } from './types';
-import { buildStacks } from './stacks';
+import { buildStacks, searchStacks } from './stacks';
 import { buildIndex, searchBooks } from './search';
 import { sortBooks } from './filters';
-import { renderAllCards, renderHome, renderStack } from './views';
+import { renderAllCards, renderHome, renderSearch, renderStack } from './views';
 
 async function init() {
   let books: Book[];
@@ -26,9 +26,17 @@ async function init() {
     const hash = location.hash || '#/';
     const query = searchInput.value.trim();
 
+    // The header search is global: from any screen, a query shows every
+    // matching stack and book. Clearing it returns to the current view.
+    if (query) {
+      renderSearch(app, query, searchStacks(stacks, query),
+        searchBooks(index, books, query), stacks);
+      document.title = `“${query}” — Gutenberg Stacks`;
+      return;
+    }
+
     if (hash === '#/cards') {
-      const shown = query ? searchBooks(index, books, query) : byDownloads;
-      renderAllCards(app, shown, stacks);
+      renderAllCards(app, byDownloads, stacks);
       document.title = 'All books — Gutenberg Stacks';
       return;
     }
@@ -37,13 +45,13 @@ async function init() {
       const slug = decodeURIComponent(hash.slice('#/stack/'.length));
       const stack = stacks.bySlug.get(slug);
       if (stack) {
-        renderStack(app, stack, stacks, query);
+        renderStack(app, stack, stacks);
         document.title = `${stack.title} — Gutenberg Stacks`;
         return;
       }
     }
 
-    renderHome(app, stacks, query);
+    renderHome(app, stacks);
     document.title = 'Gutenberg Stacks';
   };
 
