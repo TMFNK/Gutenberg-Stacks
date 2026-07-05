@@ -83,7 +83,21 @@ describe('buildStacks', () => {
     ];
     const { byBook } = buildStacks(books);
     expect(byBook.get(1)!.map((s) => s.title).sort())
-      .toEqual(['Sea stories', 'Whales']);
+      .toEqual(['A', 'Sea stories', 'Whales']);
+  });
+
+  it('creates an author stack per author, off the home wall', () => {
+    const { home, bySlug, byAuthor } = buildStacks([
+      fiction(1, { author: 'Austen, Jane' }),
+      fiction(2, { author: 'Austen, Jane' }),
+      fiction(3, { author: 'Unknown' }),
+    ]);
+    const austen = byAuthor.get('Austen, Jane')!;
+    expect(austen.books.map((b) => b.id)).toEqual([2, 1]);
+    expect(austen.slug).toBe('author--austen-jane');
+    expect(bySlug.get(austen.slug)).toBe(austen);
+    expect(home).not.toContain(austen);
+    expect(byAuthor.has('Unknown')).toBe(false);
   });
 
   it('keeps slugs unique across same-named subjects in different eras', () => {

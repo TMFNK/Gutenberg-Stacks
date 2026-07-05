@@ -19,6 +19,7 @@ The UI began as a read-only port of the [learn prototype](https://learn-e4341.fi
 
 Where the project deliberately improves on the prototype (fidelity is an influence, not a constraint):
 
+- **Authors are stacks too**: the author name on any card links to a stack of every book by that author, reachable also through the pivot modal and search
 - **Breadcrumbs** (`home › category › era › subject`) under the header — one tap back up the drill-down, no browser back button needed
 - **Swipe discoverability** on mobile: the next card peeks in from the edge, ‹ › buttons page through the deck, and the first stack of a session plays a one-time swipe nudge
 - **Global search** across all stacks and books from any screen

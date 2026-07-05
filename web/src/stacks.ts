@@ -1,7 +1,7 @@
 import type { Book } from './types';
 import { era, shelfLabel } from './filters';
 
-export type StackLevel = 'category' | 'era' | 'subject';
+export type StackLevel = 'category' | 'era' | 'subject' | 'author';
 
 /**
  * A stack in the sense of Winnie Lim's learning-network prototype:
@@ -24,6 +24,8 @@ export interface StackIndex {
   bySlug: Map<string, Stack>;
   /** Stacks in which a book appears as a direct card (for the "stacks (N)" pivot). */
   byBook: Map<number, Stack[]>;
+  /** Author-name → author stack (for the author link on book cards). */
+  byAuthor: Map<string, Stack>;
 }
 
 /** Direct cards in a stack = nested stacks + books, like the prototype's cardCount. */
@@ -164,5 +166,30 @@ export function buildStacks(books: Book[]): StackIndex {
       return category;
     });
 
-  return { home, bySlug, byBook };
+  // Author stacks: every author is a stack too, but off the home wall —
+  // reached from the author link on a card, the pivot modal, or search.
+  const byAuthor = new Map<string, Stack>();
+  const authorBooks = new Map<string, Book[]>();
+  for (const b of books) {
+    if (!b.author || b.author === 'Unknown') continue;
+    const list = authorBooks.get(b.author) ?? [];
+    list.push(b);
+    authorBooks.set(b.author, list);
+  }
+  for (const [author, members] of [...authorBooks.entries()]
+      .sort((a, z) => a[0].localeCompare(z[0]))) {
+    const stack = addStack({
+      slug: uniqueSlug(`author--${slugify(author)}`),
+      title: author,
+      description: `every book by ${author} in the archive`,
+      level: 'author',
+      parent: null,
+      children: [],
+      books: [],
+    });
+    addBooks(stack, members);
+    byAuthor.set(author, stack);
+  }
+
+  return { home, bySlug, byBook, byAuthor };
 }

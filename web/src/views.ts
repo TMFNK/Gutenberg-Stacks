@@ -116,8 +116,11 @@ interface BookCardOpts {
 function bookCard(b: Book, stacks: StackIndex, opts: BookCardOpts = {}):
     HTMLLIElement {
   const li = el('li', 'card');
-  li.append(el('span', 'card-type', 'book'),
-    el('h5', 'card-source', b.author || 'Project Gutenberg'));
+  const source = el('h5', 'card-source');
+  const authorStack = stacks.byAuthor.get(b.author);
+  if (authorStack) source.append(link(stackHref(authorStack), b.author));
+  else source.textContent = b.author || 'Project Gutenberg';
+  li.append(el('span', 'card-type', 'book'), source);
 
   const h3 = el('h3', 'card-title');
   const titleLink = link(b.url, b.title);

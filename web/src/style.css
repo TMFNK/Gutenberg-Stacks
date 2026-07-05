@@ -162,6 +162,12 @@ li.card {
   color: #666;
 }
 
+/* Author name links to the author's own stack. */
+.card-source a {
+  color: #666;
+  text-decoration: underline;
+}
+
 .card-preview {
   display: inline-block;
   width: 100%;
