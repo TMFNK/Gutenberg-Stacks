@@ -201,6 +201,19 @@ export function renderHome(app: HTMLElement, stacks: StackIndex) {
   setCarouselProgress(null);
 }
 
+/** Breadcrumb trail under the header: home › ancestors › current.
+    One tap back up the drill-down, no browser back button needed. */
+function breadcrumbs(current: string, ancestors: Stack[] = []): HTMLElement {
+  const nav = el('nav', 'crumbs');
+  nav.append(link('#/', 'home'));
+  for (const s of ancestors) {
+    nav.append(el('span', 'crumbs-sep', '›'), link(stackHref(s), s.title));
+  }
+  nav.append(el('span', 'crumbs-sep', '›'),
+    el('span', 'crumbs-here', current));
+  return nav;
+}
+
 /** ‹ › tap targets that page the mobile carousel one card at a time —
     the no-gesture route through a stack. */
 function carouselNav(list: HTMLElement,
@@ -247,8 +260,10 @@ export function renderStack(app: HTMLElement, stack: Stack,
   for (const s of stack.children) list.append(stackTypeCard(s));
   stack.books.forEach((b, i) => list.append(bookCard(b, stacks,
     { index: stack.children.length + i, total })));
-  app.replaceChildren(list, carouselNav(list, 'prev'),
-    carouselNav(list, 'next'));
+  const trail: Stack[] = [];
+  for (let p = stack.parent; p; p = p.parent) trail.unshift(p);
+  app.replaceChildren(breadcrumbs(stack.title, trail), list,
+    carouselNav(list, 'prev'), carouselNav(list, 'next'));
   setCarouselProgress(list);
   swipeHint(list);
 }
@@ -307,6 +322,6 @@ export function renderAllCards(app: HTMLElement, books: Book[],
   appendChunk();
   if (rendered < books.length) observer.observe(sentinel);
 
-  app.replaceChildren(list);
+  app.replaceChildren(breadcrumbs('all books'), list);
   setCarouselProgress(null);
 }

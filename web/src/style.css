@@ -343,6 +343,30 @@ a.card-stacks {
   display: none;
 }
 
+/* Breadcrumbs: home › category › era › subject — one tap back up. */
+.crumbs {
+  padding: 6px 10px 2px;
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.crumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.crumbs a {
+  color: #111;
+  text-decoration: underline;
+  padding: 6px 2px;
+}
+
+.crumbs-sep {
+  margin: 0 5px;
+}
+
 @keyframes swipe-hint {
   0%, 100% {
     transform: none;
