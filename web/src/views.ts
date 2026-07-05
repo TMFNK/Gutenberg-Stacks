@@ -37,7 +37,7 @@ function openStackModal(title: string, stacks: Stack[]) {
     for (let p = s.parent; p; p = p.parent) path.unshift(p.title);
     const context = path.length ? ` (${path.join(' · ')})` : '';
     const a = link(stackHref(s),
-      `${s.title}${context} — ${cardCount(s)} cards`);
+      `${s.title}${context} · ${cardCount(s)} cards`);
     a.addEventListener('click', (e) => {
       e.preventDefault();
       close();
@@ -281,7 +281,7 @@ export function renderSearch(app: HTMLElement, query: string,
     `${total} card${total === 1 ? '' : 's'} match “${query}”`));
   if (total === 0)
     head.append(el('p', 'empty-note',
-      'no stacks or books match — try fewer letters'));
+      'no stacks or books match, try fewer letters'));
   else if (bookHits.length > MAX_BOOKS)
     head.append(el('p', 'empty-note',
       `showing the first ${MAX_BOOKS} books`));

@@ -123,7 +123,7 @@ export function buildStacks(books: Book[]): StackIndex {
       const category = addStack({
         slug: uniqueSlug(slugify(title)),
         title,
-        description: `every book on the ${title} shelf — drill down by era, then by subject`,
+        description: `every book on the ${title} shelf: drill down by era, then by subject`,
         level: 'category',
         parent: null,
         children: [],

@@ -31,13 +31,13 @@ async function init() {
     if (query) {
       renderSearch(app, query, searchStacks(stacks, query),
         searchBooks(index, books, query), stacks);
-      document.title = `“${query}” — Gutenberg Stacks`;
+      document.title = `“${query}” · Gutenberg Stacks`;
       return;
     }
 
     if (hash === '#/cards') {
       renderAllCards(app, byDownloads, stacks);
-      document.title = 'All books — Gutenberg Stacks';
+      document.title = 'All books · Gutenberg Stacks';
       return;
     }
 
@@ -46,7 +46,7 @@ async function init() {
       const stack = stacks.bySlug.get(slug);
       if (stack) {
         renderStack(app, stack, stacks);
-        document.title = `${stack.title} — Gutenberg Stacks`;
+        document.title = `${stack.title} · Gutenberg Stacks`;
         return;
       }
     }
