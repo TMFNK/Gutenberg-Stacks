@@ -1,14 +1,27 @@
-# Gutenberg Book Finder
+# Gutenberg Stacks
 
-A search & browse interface for free Project Gutenberg books. Search instantly across titles, authors, subjects, and summaries; filter by mood, theme, difficulty, subject, language, and era; or hit "Surprise me". Every book card shows its cover, an LLM-generated hook, and tags, with a detail view linking straight to the free book on gutenberg.org.
+A card-and-stack browser for free Project Gutenberg books, modeled faithfully on [Winnie Lim's self-directed learning network prototype](https://winnielim.org/playlists/designing-a-self-directed-learning-network/). Instead of a search form, you wander: the home screen is a wall of black **stacks** (Project Gutenberg categories), each stack opens into **era** stacks, eras open into **subject** stacks, and subjects hold **book cards** — cover, author, an LLM-written hook, and a link straight to the free book on gutenberg.org. Every card shows which stacks it lives in ("stacks (N)"), so you can pivot sideways into a different rabbit hole at any point.
 
-**Live site:** <https://tmfnk.github.io/Gutenberg-Book-Finder/>
+**Live site:** <https://tmfnk.github.io/Gutenberg-Stacks/>
+
+This repo continues the [Gutenberg-Book-Finder](https://github.com/TMFNK/Gutenberg-Book-Finder) project (its full git history is preserved here); the original repo keeps the pre-redesign search/filter interface.
 
 Currently covering the 1,000 most-downloaded books on Project Gutenberg (M1). Scaling to the full catalog (~75,000 books) is planned.
 
+## The design
+
+The UI is a read-only port of the [learn prototype](https://learn-e4341.firebaseapp.com/) (Vue + Firebase, 2017) that Winnie Lim built across her design essays (v0.1–v0.3): the same card anatomy, the same nested-stack drill-down, the same "stacks (N)" pivot modal, the same plain black-and-white visual language — applied to the Gutenberg archive.
+
+- **Home** — one stack per PG bookshelf, plus an "All books" stack with client-side full-text search
+- **Drill down** — Category → Era (Before 1800 / 19th / 20th century / Undated) → Subject → books; nested stacks render as cards, exactly like the prototype
+- **Pivot** — books belong to many stacks; the "stacks (N)" modal jumps between them
+- **Mobile** — full-height swipeable card carousel inside a stack (CSS scroll-snap), vertical list everywhere else
+
+Stacks are derived in the browser at load time from `books.json` — the site stays fully static. The full research trail and decision log lives in the maintainer's vault (`Projects/Gutenberg-Book-Finder/Winnie-Lim-Stacks-Redesign.md`).
+
 ## How it works
 
-A Python pipeline builds the map data once, offline:
+A Python pipeline builds the book data once, offline:
 
 1. **Catalog** — fetch book metadata (title, author, subjects, download counts) from the [Gutendex](https://gutendex.com/) API.
 2. **Excerpts** — download each book's plain text, strip the Project Gutenberg boilerplate, keep the first ~2,000 words.
@@ -36,10 +49,10 @@ pipeline/   Python data pipeline (uv-managed)
   tests/        pytest suite
 web/        Vite + TypeScript frontend
   src/
-    grid.ts     book card grid
-    filters.ts  facet filters, sorting, surprise-me
-    search.ts   MiniSearch full-text search
-    card.ts     book detail panel
+    stacks.ts   derives the category → era → subject stack tree
+    views.ts    card/stack rendering + the "stacks (N)" pivot modal
+    main.ts     data load + hash router (#/, #/stack/<slug>, #/cards)
+    search.ts   MiniSearch full-text search (All books view)
 docs/       design spec and implementation plan
 ```
 
@@ -68,5 +81,5 @@ Requires `web/public/data/books.json`, produced by the `export` pipeline stage (
 
 ## Design & planning docs
 
-- [docs/design.md](docs/design.md) — approved design spec
+- [docs/design.md](docs/design.md) — original M1 design spec (the pre-redesign "Gutenberg Galaxy" star-map concept; the pipeline sections still apply)
 - [docs/superpowers/plans/2026-07-04-m1-pipeline-and-map.md](docs/superpowers/plans/2026-07-04-m1-pipeline-and-map.md) — M1 implementation plan

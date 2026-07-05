@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EMPTY_FILTERS, applyFilters, era, facetOptions, pickRandom,
-         shelfLabel, sortBooks } from './filters';
+import { era, shelfLabel, sortBooks } from './filters';
 import type { Book } from './types';
 
 function mk(over: Partial<Book>): Book {
@@ -26,41 +25,6 @@ describe('shelfLabel', () => {
   });
 });
 
-describe('applyFilters', () => {
-  const books = [
-    mk({ id: 1, mood: 'dark', themes: ['obsession'], difficulty: 'hard' }),
-    mk({ id: 2, mood: 'witty', themes: ['marriage'], lang: 'fr', year: 1750 }),
-  ];
-  it('empty filters keep everything', () => {
-    expect(applyFilters(books, EMPTY_FILTERS)).toHaveLength(2);
-  });
-  it('filters by mood, theme, era together', () => {
-    const hits = applyFilters(books, { ...EMPTY_FILTERS, mood: 'dark', theme: 'obsession', era: '19th century' });
-    expect(hits.map((b) => b.id)).toEqual([1]);
-  });
-  it('filters by bookshelf and author', () => {
-    const data = [
-      mk({ id: 1, author: 'Austen, Jane', bookshelves: ['Category: Novels'] }),
-      mk({ id: 2, author: 'Melville, Herman', bookshelves: ['Category: Adventure'] }),
-    ];
-    expect(applyFilters(data, { ...EMPTY_FILTERS, bookshelf: 'Category: Novels' }).map((b) => b.id))
-      .toEqual([1]);
-    expect(applyFilters(data, { ...EMPTY_FILTERS, author: 'Melville, Herman' }).map((b) => b.id))
-      .toEqual([2]);
-  });
-  it('handles null tag fields', () => {
-    expect(applyFilters([mk({ mood: null })], { ...EMPTY_FILTERS, mood: 'dark' })).toHaveLength(0);
-  });
-});
-
-describe('facetOptions', () => {
-  it('sorts by frequency then alphabetically and respects limit', () => {
-    const books = [mk({ mood: 'dark' }), mk({ mood: 'dark' }), mk({ mood: 'witty' }), mk({ mood: null })];
-    expect(facetOptions(books, (b) => [b.mood])).toEqual(['dark', 'witty']);
-    expect(facetOptions(books, (b) => [b.mood], 1)).toEqual(['dark']);
-  });
-});
-
 describe('sortBooks', () => {
   const books = [mk({ id: 1, title: 'B', downloads: 5 }), mk({ id: 2, title: 'A', downloads: 9 })];
   it('sorts by downloads desc', () => {
@@ -69,13 +33,5 @@ describe('sortBooks', () => {
   it('sorts by title asc without mutating input', () => {
     expect(sortBooks(books, 'title')[0].title).toBe('A');
     expect(books[0].title).toBe('B');
-  });
-});
-
-describe('pickRandom', () => {
-  it('returns null on empty and a member otherwise', () => {
-    expect(pickRandom([])).toBeNull();
-    const books = [mk({ id: 7 })];
-    expect(pickRandom(books)!.id).toBe(7);
   });
 });
