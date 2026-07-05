@@ -338,6 +338,21 @@ a.card-stacks {
   transition: width 0.15s ease-out;
 }
 
+/* ‹ › carousel paging: mobile-only (desktop cards float in a grid). */
+.carousel-nav {
+  display: none;
+}
+
+@keyframes swipe-hint {
+  0%, 100% {
+    transform: none;
+  }
+
+  40% {
+    transform: translateX(-56px);
+  }
+}
+
 /* Mobile: inside a stack, full-height cards in a swipeable carousel,
    as in the prototype (Swiper there, CSS scroll-snap here). Home and
    the All-books view stay vertical, as the prototype's did. */
@@ -412,12 +427,42 @@ a.card-stacks {
   }
 
   .card-list.carousel .card {
-    flex: 0 0 92%;
-    width: 92%;
+    flex: 0 0 85%;
+    width: 85%;
     height: 78vh;
     min-height: 400px;
     margin: 8px 4px calc(8px + env(safe-area-inset-bottom));
     scroll-snap-align: center;
+  }
+
+  /* One-time "you can swipe" nudge on the first stack of the session. */
+  .card-list.carousel.hint {
+    animation: swipe-hint 0.9s ease-in-out 0.6s 1;
+  }
+
+  /* ‹ › tap targets: page through the deck without knowing to swipe. */
+  .carousel-nav {
+    display: block;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 997;
+    width: 36px;
+    height: 56px;
+    padding: 0;
+    font-size: 26px;
+    line-height: 56px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  .carousel-prev {
+    left: 2px;
+  }
+
+  .carousel-next {
+    right: 2px;
   }
 
   /* Finger-sized touch targets. */

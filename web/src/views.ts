@@ -201,6 +201,42 @@ export function renderHome(app: HTMLElement, stacks: StackIndex) {
   setCarouselProgress(null);
 }
 
+/** ‹ › tap targets that page the mobile carousel one card at a time —
+    the no-gesture route through a stack. */
+function carouselNav(list: HTMLElement,
+                     dir: 'prev' | 'next'): HTMLButtonElement {
+  const btn = el('button', `carousel-nav carousel-${dir}`,
+    dir === 'prev' ? '‹' : '›');
+  btn.setAttribute('aria-label',
+    dir === 'prev' ? 'previous card' : 'next card');
+  btn.addEventListener('click', () => {
+    const cards = list.children;
+    const step = cards.length > 1
+      ? (cards[1] as HTMLElement).offsetLeft - (cards[0] as HTMLElement).offsetLeft
+      : list.clientWidth;
+    const from = list.scrollLeft;
+    const target = from + (dir === 'prev' ? -step : step);
+    list.scrollTo({ left: target, behavior: 'smooth' });
+    // Some browsers swallow smooth scrolls on mandatory-snap containers;
+    // if nothing moved, jump instead.
+    setTimeout(() => {
+      if (list.scrollLeft === from) list.scrollLeft = target;
+    }, 150);
+  });
+  return btn;
+}
+
+/** One-time "you can swipe" hint: on the first stack opened this
+    session, nudge the deck sideways and back. */
+function swipeHint(list: HTMLElement) {
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
+  if (sessionStorage.getItem('swipe-hinted')) return;
+  sessionStorage.setItem('swipe-hinted', '1');
+  list.classList.add('hint');
+  list.addEventListener('animationend',
+    () => list.classList.remove('hint'), { once: true });
+}
+
 /** A stack: header card, nested stack cards, then book cards.
     On mobile the list becomes a swipeable carousel. */
 export function renderStack(app: HTMLElement, stack: Stack,
@@ -211,8 +247,10 @@ export function renderStack(app: HTMLElement, stack: Stack,
   for (const s of stack.children) list.append(stackTypeCard(s));
   stack.books.forEach((b, i) => list.append(bookCard(b, stacks,
     { index: stack.children.length + i, total })));
-  app.replaceChildren(list);
+  app.replaceChildren(list, carouselNav(list, 'prev'),
+    carouselNav(list, 'next'));
   setCarouselProgress(list);
+  swipeHint(list);
 }
 
 /** Global search results: matching stacks as stack cards, then matching
