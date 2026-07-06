@@ -9,5 +9,5 @@ node_modules/
 dist/
 .cursor/
 .claude/
-.DS_Store/
+.DS_Store
 AGENTS.md
